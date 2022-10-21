@@ -13,6 +13,8 @@ app.use('/api/auth',require('./routes/auth'))
 app.use('/api/restaurant',require('./routes/restaurants'))
 app.use('/api/food',require('./routes/food'))
 app.use('/api/catalogeLists',require('./routes/catalogeLists'))
+app.use('/api/cart',require('./routes/cart'))
+app.use('/api/order',require('./routes/orders'))
 
 
 app.listen(port, () => {

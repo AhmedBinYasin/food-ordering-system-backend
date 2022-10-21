@@ -1,7 +1,7 @@
 const express = require('express')
-const Cart = require('../models/Cart')
 const router = express.Router()
 const { body, validationResult } = require('express-validator')
+const { Cart } = require('../models/Cart')
 
 //Route:1 Add to Cart
 router.post('/Add', [], async (req, res) => {
@@ -16,12 +16,13 @@ router.post('/Add', [], async (req, res) => {
     let foundIndexItem
     //check if Email exist
     let cart = await Cart.findOne({ Email: req.body.Email })
+    console.log(req.body)
     if (!cart) {
         Cart.create({
             Email: req.body.Email,
-            Restaurent: req.body.Restaurent,
+            Restaurent: req.body.Restaurent[0],
         })
-        return res.json({ Message: 'Item Added' })
+        return res.json( 'Item Added' )
     }
     else {
         for (let i = 0; i < cart.Restaurent.length; i++) {
@@ -38,7 +39,7 @@ router.post('/Add', [], async (req, res) => {
                     console.error('ERROR!')
                 }
             })
-            return res.json({ Message: 'Item Added' })
+            return res.json( 'Item Added' )
         }
         else {
             for (let i = 0; i < cart.Restaurent[foundIndexRestaurant].ItemList.length; i++) {
@@ -55,7 +56,7 @@ router.post('/Add', [], async (req, res) => {
                         console.error('ERROR!')
                     }
                 })
-                return res.json({ Message: 'Item Added' })
+                return res.json( 'Item Added' )
             }
             else {
                 cart.Restaurent[foundIndexRestaurant].ItemList[foundIndexItem].quantity = parseInt(cart.Restaurent[foundIndexRestaurant].ItemList[foundIndexItem].quantity,) + parseInt(req.body.Restaurent[0].ItemList[0].quantity)
@@ -64,7 +65,7 @@ router.post('/Add', [], async (req, res) => {
                         console.error('ERROR!')
                     }
                 })
-                return res.json({ Message: 'Item Added' })
+                return res.json( 'Item Added' )
             }
         }
     }
@@ -110,7 +111,7 @@ router.post('/Remove', [], async (req, res) => {
                             console.error('ERROR!')
                         }
                     })
-                    return res.json({ Message: 'Item Removed' })
+                    return res.json('Item Removed')
                 }
                 else {
                     if (cart.Restaurent[foundIndexRestaurant].ItemList.length > 1) {
@@ -120,7 +121,7 @@ router.post('/Remove', [], async (req, res) => {
                                 console.error('ERROR!')
                             }
                         })
-                        return res.json({ Message: 'Item Removed' })
+                        return res.json('Item Removed')
                     }
                     else {
                         if (cart.Restaurent.length > 1) {
@@ -130,11 +131,11 @@ router.post('/Remove', [], async (req, res) => {
                                     console.error('ERROR!')
                                 }
                             })
-                            return res.json({ Message: 'Item Removed' })
+                            return res.json('Item Removed')
                         }
                         else {
                             await Cart.findByIdAndDelete(cart._id)
-                            return res.json({ Message: 'Item Removed' })
+                            return res.json('Item Removed')
                         }
                     }
                 }
@@ -142,6 +143,18 @@ router.post('/Remove', [], async (req, res) => {
         }
     }
 })
+
+//Route:3 View Cart
+router.post('/ViewCart', [], async (req, res) => {
+    //return errors if found
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+    //return Catalog
+    let cart = await Cart.findOne({ Email: req.body.Email })
+    return res.json(cart)
+  })
 
 
 
