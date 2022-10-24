@@ -35,5 +35,5 @@ const orderSchema = new Schema({
   })
   
   const Orders = mongoose.model('order', orderSchema)
-  module.exports = Orders
+  module.exports = {Orders,orderSchema}
   
